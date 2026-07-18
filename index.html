@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Ledger &mdash; Student Management System</title>
+<meta name="description" content="A frontend-only Student Management System with dashboard, registration, search, filter, sort and dark mode.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;700&family=Special+Elite&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assests/css/style.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main-content">Skip to main content</a>
+
+<div class="app" id="app">
+
+  <!-- Sidebar: binder-tab index -->
+  <aside class="sidebar" aria-label="Main navigation">
+    <div class="punch-holes" aria-hidden="true">
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+    <div class="sidebar-brand">
+      <span class="brand-mark" aria-hidden="true">&#128213;</span>
+      <span class="brand-text">Student<br>Ledger</span>
+    </div>
+    <nav class="tab-nav" role="tablist" aria-label="Views">
+      <button class="tab" role="tab" aria-selected="true" aria-controls="view-dashboard" id="tab-dashboard" data-view="dashboard">
+        <span class="tab-index">01</span> Dashboard
+      </button>
+      <button class="tab" role="tab" aria-selected="false" aria-controls="view-register" id="tab-register" data-view="register">
+        <span class="tab-index">02</span> Register
+      </button>
+      <button class="tab" role="tab" aria-selected="false" aria-controls="view-students" id="tab-students" data-view="students">
+        <span class="tab-index">03</span> Students
+      </button>
+    </nav>
+    <div class="sidebar-footer">
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-pressed="false">
+        <span class="theme-toggle-icon" aria-hidden="true">&#9789;</span>
+        <span class="theme-toggle-label">Chalkboard mode</span>
+      </button>
+    </div>
+  </aside>
+
+  <div class="content-frame">
+    <header class="topbar">
+      <h1 class="topbar-title">Student Ledger</h1>
+      <p class="topbar-subtitle" id="topbar-subtitle">A running register of every student on record.</p>
+    </header>
+
+    <main id="main-content">
+
+      <!-- ================= DASHBOARD ================= -->
+      <section id="view-dashboard" class="view is-active" role="tabpanel" aria-labelledby="tab-dashboard">
+        <div class="ledger-rule ledger-rule--top" aria-hidden="true"></div>
+        <div class="stat-line" id="stat-line">
+          <div class="stat-entry">
+            <span class="stat-label">Total Students</span>
+            <span class="stat-value" id="stat-total">0</span>
+          </div>
+          <div class="stat-entry">
+            <span class="stat-label">Active</span>
+            <span class="stat-value" id="stat-active">0</span>
+          </div>
+          <div class="stat-entry">
+            <span class="stat-label">Departments</span>
+            <span class="stat-value" id="stat-departments">0</span>
+          </div>
+          <div class="stat-entry">
+            <span class="stat-label">Average Marks</span>
+            <span class="stat-value" id="stat-avg-marks">0</span>
+          </div>
+        </div>
+        <div class="ledger-rule ledger-rule--bottom" aria-hidden="true"></div>
+
+        <div class="dashboard-grid">
+          <div class="ledger-card">
+            <h2 class="ledger-card-title"><span class="eyebrow">By Department</span></h2>
+            <ul class="tally-list" id="dept-breakdown"></ul>
+          </div>
+          <div class="ledger-card">
+            <h2 class="ledger-card-title"><span class="eyebrow">Recently Added</span></h2>
+            <ul class="recent-list" id="recent-list"></ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= REGISTER / EDIT ================= -->
+      <section id="view-register" class="view" role="tabpanel" aria-labelledby="tab-register">
+        <h2 class="view-title"><span class="eyebrow" id="form-mode-label">New Entry</span> Register Student</h2>
+
+        <form id="student-form" class="ledger-form" novalidate>
+          <input type="hidden" id="student-id" name="studentId">
+
+          <div class="form-grid">
+            <div class="field">
+              <label for="fullName">Full Name <span class="required" aria-hidden="true">*</span></label>
+              <input type="text" id="fullName" name="fullName" autocomplete="name" required>
+              <span class="field-error" id="err-fullName" role="alert"></span>
+            </div>
+
+            <div class="field">
+              <label for="department">Department <span class="required" aria-hidden="true">*</span></label>
+              <select id="department" name="department" required>
+                <option value="">Select department</option>
+                <option value="CSE">Computer Science (CSE)</option>
+                <option value="ECE">Electronics &amp; Communication (ECE)</option>
+                <option value="EEE">Electrical &amp; Electronics (EEE)</option>
+                <option value="MECH">Mechanical (MECH)</option>
+                <option value="CIVIL">Civil (CIVIL)</option>
+                <option value="IT">Information Technology (IT)</option>
+              </select>
+              <span class="field-error" id="err-department" role="alert"></span>
+            </div>
+
+            <div class="field">
+              <label for="year">Year <span class="required" aria-hidden="true">*</span></label>
+              <select id="year" name="year" required>
+                <option value="">Select year</option>
+                <option value="1">First Year</option>
+                <option value="2">Second Year</option>
+                <option value="3">Third Year</option>
+                <option value="4">Fourth Year</option>
+              </select>
+              <span class="field-error" id="err-year" role="alert"></span>
+            </div>
+
+            <div class="field">
+              <label for="gender">Gender <span class="required" aria-hidden="true">*</span></label>
+              <select id="gender" name="gender" required>
+                <option value="">Select gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+              <span class="field-error" id="err-gender" role="alert"></span>
+            </div>
+
+            <div class="field">
+              <label for="email">Email <span class="required" aria-hidden="true">*</span></label>
+              <input type="email" id="email" name="email" autocomplete="email" required>
+              <span class="field-error" id="err-email" role="alert"></span>
+            </div>
+
+            <div class="field">
+              <label for="phone">Phone <span class="required" aria-hidden="true">*</span></label>
+              <input type="tel" id="phone" name="phone" autocomplete="tel" placeholder="10-digit number" required>
+              <span class="field-error" id="err-phone" role="alert"></span>
+            </div>
+
+            <div class="field">
+              <label for="marks">Marks (0&ndash;100) <span class="required" aria-hidden="true">*</span></label>
+              <input type="number" id="marks" name="marks" min="0" max="100" step="1" required>
+              <span class="field-error" id="err-marks" role="alert"></span>
+            </div>
+
+            <div class="field">
+              <label for="status">Status</label>
+              <select id="status" name="status">
+                <option value="Active">Active</option>
+                <option value="Probation">Probation</option>
+                <option value="Graduated">Graduated</option>
+              </select>
+            </div>
+
+            <div class="field field--wide">
+              <label for="address">Address <span class="required" aria-hidden="true">*</span></label>
+              <textarea id="address" name="address" rows="2" required></textarea>
+              <span class="field-error" id="err-address" role="alert"></span>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn--primary" id="form-submit-btn">Save Entry</button>
+            <button type="button" class="btn btn--ghost" id="form-cancel-btn">Clear Form</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- ================= STUDENT LIST ================= -->
+      <section id="view-students" class="view" role="tabpanel" aria-labelledby="tab-students">
+        <h2 class="view-title"><span class="eyebrow">The Register</span> Student List</h2>
+
+        <div class="toolbar">
+          <div class="field field--search">
+            <label for="search-input" class="sr-only">Search students</label>
+            <input type="search" id="search-input" placeholder="Search by name or roll number&hellip;">
+          </div>
+          <div class="field">
+            <label for="filter-department" class="sr-only">Filter by department</label>
+            <select id="filter-department">
+              <option value="">All Departments</option>
+              <option value="CSE">CSE</option>
+              <option value="ECE">ECE</option>
+              <option value="EEE">EEE</option>
+              <option value="MECH">MECH</option>
+              <option value="CIVIL">CIVIL</option>
+              <option value="IT">IT</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="filter-year" class="sr-only">Filter by year</label>
+            <select id="filter-year">
+              <option value="">All Years</option>
+              <option value="1">Year 1</option>
+              <option value="2">Year 2</option>
+              <option value="3">Year 3</option>
+              <option value="4">Year 4</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="sort-by" class="sr-only">Sort by</label>
+            <select id="sort-by">
+              <option value="name-asc">Name (A&ndash;Z)</option>
+              <option value="name-desc">Name (Z&ndash;A)</option>
+              <option value="marks-desc">Marks (High&ndash;Low)</option>
+              <option value="marks-asc">Marks (Low&ndash;High)</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="loading-indicator" class="loading-indicator" hidden>
+          <span class="loading-stamp">Fetching Register&hellip;</span>
+        </div>
+
+        <div id="empty-state" class="empty-state" hidden>
+          <p class="empty-state-mark" aria-hidden="true">&#9723;</p>
+          <p class="empty-state-title">No entries found.</p>
+          <p class="empty-state-text">Try a different search, or register a new student.</p>
+        </div>
+
+        <div class="register-table-wrap">
+          <table class="register-table" id="register-table">
+            <thead>
+              <tr>
+                <th scope="col">Roll&nbsp;#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Department</th>
+                <th scope="col">Year</th>
+                <th scope="col">Marks</th>
+                <th scope="col">Status</th>
+                <th scope="col"><span class="sr-only">Actions</span></th>
+              </tr>
+            </thead>
+            <tbody id="register-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- Student detail: report-card overlay -->
+<div class="modal-overlay" id="detail-overlay" hidden>
+  <div class="report-card" role="dialog" aria-modal="true" aria-labelledby="detail-name" id="detail-card">
+    <button class="report-card-close" id="detail-close" type="button" aria-label="Close student record">&times;</button>
+    <div class="report-card-perforation" aria-hidden="true"></div>
+    <div class="report-card-header">
+      <h2 id="detail-name">&nbsp;</h2>
+      <span class="stamp" id="detail-status">Active</span>
+    </div>
+    <p class="report-card-meta" id="detail-meta">Roll &mdash; &middot; &mdash; &middot; Year &mdash;</p>
+    <div class="ledger-rule" aria-hidden="true"></div>
+    <dl class="report-card-fields">
+      <div><dt>Email</dt><dd id="detail-email">&mdash;</dd></div>
+      <div><dt>Phone</dt><dd id="detail-phone">&mdash;</dd></div>
+      <div><dt>Gender</dt><dd id="detail-gender">&mdash;</dd></div>
+      <div><dt>Address</dt><dd id="detail-address">&mdash;</dd></div>
+      <div><dt>Date Added</dt><dd id="detail-added">&mdash;</dd></div>
+      <div><dt>Last Updated</dt><dd id="detail-updated">&mdash;</dd></div>
+    </dl>
+    <div class="form-actions">
+      <button class="btn btn--primary" id="detail-edit-btn" type="button">Edit Record</button>
+      <button class="btn btn--danger" id="detail-delete-btn" type="button">Delete Record</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm dialog -->
+<div class="modal-overlay" id="confirm-overlay" hidden>
+  <div class="confirm-dialog" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title">
+    <p class="stamp stamp--rect" aria-hidden="true">Confirm</p>
+    <h2 id="confirm-title">Delete this record?</h2>
+    <p id="confirm-body">This action cannot be undone.</p>
+    <div class="form-actions">
+      <button class="btn btn--danger" id="confirm-yes-btn" type="button">Delete</button>
+      <button class="btn btn--ghost" id="confirm-no-btn" type="button">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toasts -->
+<div class="toast-container" id="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+<script src="assests/js/script.js"></script>
+</body>
+</html>
